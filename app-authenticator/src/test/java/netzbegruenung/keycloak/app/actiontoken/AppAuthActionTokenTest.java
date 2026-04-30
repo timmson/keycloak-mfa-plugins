@@ -1,0 +1,49 @@
+/*
+ * Copyright 2016 Red Hat, Inc. and/or its affiliates
+ * and other contributors as indicated by the @author tags.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package netzbegruenung.keycloak.app.actiontoken;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@DisplayName("AppAuthActionToken")
+class AppAuthActionTokenTest {
+
+	@Test
+	@DisplayName("Token type should have correct token type")
+	void tokenTypeShouldHaveCorrectTokenType() {
+		assertEquals("app-auth-action-token", AppAuthActionToken.TOKEN_TYPE);
+	}
+
+	@Test
+	@DisplayName("Creation should create token with correct values")
+	void creationShouldCreateTokenWithCorrectValues() {
+		String userId = "user-123";
+		Integer expiration = 3600;
+		String authSessionId = "auth-session-456";
+		String clientId = "client-789";
+
+		AppAuthActionToken token = new AppAuthActionToken(userId, expiration, authSessionId, clientId);
+
+		assertEquals(userId, token.getUserId());
+		assertEquals(authSessionId, token.getOriginalAuthenticationSessionId());
+		assertEquals(clientId, token.getIssuer());
+		assertEquals(AppAuthActionToken.TOKEN_TYPE, token.getType());
+	}
+}
