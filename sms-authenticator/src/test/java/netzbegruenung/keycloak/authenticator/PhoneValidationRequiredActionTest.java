@@ -66,9 +66,6 @@ class PhoneValidationRequiredActionTest {
 	private AuthenticationSessionModel authSession;
 
 	@Mock
-	private LoginFormsProvider form;
-
-	@Mock
 	private AuthenticatorConfigModel authConfig;
 
 	@Mock
@@ -138,14 +135,14 @@ class PhoneValidationRequiredActionTest {
 		action.requiredActionChallenge(context);
 
 		verify(context, times(1)).challenge(eq(challenge));
-		verify(user).addRequiredAction(PhoneNumberRequiredAction.PROVIDER_ID);
+		verify(authSession).addRequiredAction(PhoneNumberRequiredAction.PROVIDER_ID);
 		verify(authSession).setAuthNote(eq("code"), anyString());
 		verify(authSession).setAuthNote(eq("ttl"), anyString());
 	}
 
 	@Test
 	@DisplayName("processAction should succeed with valid code and create credential")
-	void processActionShouldSucceedWithValidCode() throws IOException {
+	void processActionShouldSucceedWithValidCode() {
 		Map<String, String> configMap = new HashMap<>();
 		configMap.put("storeInAttribute", "true");
 
@@ -170,14 +167,14 @@ class PhoneValidationRequiredActionTest {
 		action.processAction(context);
 
 		verify(credentialProvider).createCredential(eq(realm), eq(user), any(SmsAuthCredentialModel.class));
-		verify(user).removeRequiredAction(PhoneNumberRequiredAction.PROVIDER_ID);
+		verify(authSession).removeRequiredAction(PhoneNumberRequiredAction.PROVIDER_ID);
 		verify(user).setSingleAttribute(eq("mobile_number"), eq(mobileNumber));
 		verify(context).success();
 	}
 
 	@Test
 	@DisplayName("processAction should handle invalid code")
-	void processActionShouldSucceedWithInvalidCode() throws IOException {
+	void processActionShouldSucceedWithInvalidCode() {
 		String validCode = "123456";
 		String invalidCode = "111111";
 		String mobileNumber = "+491761234567";
@@ -204,7 +201,7 @@ class PhoneValidationRequiredActionTest {
 
 	@Test
 	@DisplayName("processAction should handle empty code")
-	void processActionShouldHandleWithEmptyCode() throws IOException {
+	void processActionShouldHandleWithEmptyCode() {
 		String validCode = "123456";
 		String mobileNumber = "+491761234567";
 		long futureTtl = System.currentTimeMillis() + 300000L;
